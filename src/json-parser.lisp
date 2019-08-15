@@ -5,13 +5,17 @@
   (let ((nodes (ppcre:split "," str)))
 	nodes))
 
+(defun node-to-pair (node)
+  (let* ((sps (ppcre:split ":" node))
+		 (left (string-trim '(#\Space) (ppcre:regex-replace-all "\"" (nth 0 sps) "")))
+		 (right (ppcre:regex-replace-all
+				 "\""
+				(ppcre:scan-to-strings "\".*?\"" (nth 1 sps)) "")))
+	(list (intern left :keyword) right)))
+
 ;;; TODO: 文字列中に:が入っていると死ぬ。
 (defun nodes-to-pair (nodes)
-  (mapcar #'(lambda (x) (let* ((sps (ppcre:split ":" x))
-							   (left (nth 0 sps))
-							   (right (nth 1 sps)))
-						  (list (intern left) right)))
-		  nodes))
+  (mapcan #'node-to-pair nodes))
 
 (defun tree-remove-if (tree tar)
   (cond ((null tree) nil)
@@ -25,10 +29,13 @@
 		(t (append (list (tree-remove-if (car tree) tar))
 				   (tree-remove-if (cdr tree) tar)))))
 
-(defun to-pair (lst)
-  (if (listp lst)
-	   (mapcar #'to-pair lst)
-	   (nodes-to-pair (str-to-nodes lst))))
+(defun tree-to-pair (tree)
+  (cond ((null tree) nil)
+		((listp (car tree))
+		 (cons (tree-to-pair (car tree))
+			   (tree-to-pair (cdr tree))))
+		(t (append (nodes-to-pair (str-to-nodes (car tree)))
+				   (tree-to-pair (cdr tree))))))
 
 (defun parse (str)
   (let ((lst (tree-remove-if (nth 2
@@ -39,4 +46,4 @@
 												 "</a>")
 						(closure-html:make-lhtml-builder))))
 							 :a)))
-	(to-pair lst)))
+	(tree-remove-if (tree-to-pair lst) nil)))
