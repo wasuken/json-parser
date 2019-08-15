@@ -14,4 +14,6 @@
 	  '(:|test| "te,st" :|test2| "t,est2" :|test3| (:|test4| "test,4")))
   (is (json-parser:parse "{\"test\": \"te:st\", \"test2\": \"t:est2\", \"test3\": {\"test4\": \"test:4\"}}")
 	  '(:|test| "te:st" :|test2| "t:est2" :|test3| (:|test4| "test:4")))
+  (is (json-parser:parse "{\"test\": 1, \"test2\": 2}")
+	  '(:|test| 1 :|test2| 2))
   )
