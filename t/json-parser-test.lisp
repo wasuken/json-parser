@@ -37,4 +37,6 @@
   (is-error (json-parser:parse "{{}:{}}") 'simple-error)
   (is-error (json-parser:parse "{{}:\"test\"}") 'simple-error)
   (is-error (json-parser:parse "{{\"test\": \"test\"}:\"test\"}") 'simple-error)
+  (is-error (json-parser:parse "{,:,}") 'simple-error)
+  (is-error (json-parser:parse "{.,mo23qrjo:ijiojdiiorngirjt43}") 'simple-error)
   )
