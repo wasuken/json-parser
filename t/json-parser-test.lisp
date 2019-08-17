@@ -18,16 +18,21 @@
 	  '(:|test| 1 :|test2| 2))
   (is (json-parser:parse "{\"test\": true, \"test2\": false}")
 	  '(:|test| t :|test2| nil))
+  (is (json-parser:parse "{null: null}")
+	  '(:|null| nil))
+  (is (json-parser:parse "{}")
+	  '())
+  (is (json-parser:parse "{\"test\" : [\"test\", 1, 2, 3 ]}")
+	  '(:|test| ("test" 1 2 3)))
   )
 
-;; (subtest "error mechanism"
-;;   (is-error (json-parser:parse "{\"test\":")  'simple-error)
-;;   (is-error (json-parser:parse "")  'simple-error)
-;;   (is-error (json-parser:parse "}}}}}}}")  'simple-error)
-;;   (is-error (json-parser:parse ",,,,,,,{,,,,}{:,a}") 'simple-error))
-
-;; (subtest "mean test"
-;;   (is (json-parser:parse "{1:1}")
-;; 	  '(:|1| 1))
-;;   (is (json-parser:parse "{false:false}")
-;; 	  '(:|false| false)))
+(subtest "error mechanism"
+  (is-error (json-parser:parse "{\"test\":")  'simple-error)
+  (is-error (json-parser:parse "")  'simple-error)
+  (is-error (json-parser:parse "}}}}}}}")  'simple-error)
+  (is-error (json-parser:parse "{,}") 'simple-error)
+  (is-error (json-parser:parse ",,,,,,,{}") 'simple-error)
+  (is-error (json-parser:parse "{{}:{}}") 'simple-error)
+  (is-error (json-parser:parse "{{}:\"test\"}") 'simple-error)
+  (is-error (json-parser:parse "{{\"test\": \"test\"}:\"test\"}") 'simple-error)
+  )
