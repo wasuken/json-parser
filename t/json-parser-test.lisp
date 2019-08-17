@@ -24,6 +24,8 @@
 	  '())
   (is (json-parser:parse "{\"test\" : [\"test\", 1, 2, 3 ]}")
 	  '(:|test| ("test" 1 2 3)))
+  (is (json-parser:parse "1")
+	  1)
   )
 
 (subtest "error mechanism"
